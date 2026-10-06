@@ -15,3 +15,6 @@ push:
 	python3 ./push.py game.bin "$(dbuser)" "$(dbpass)"
 	
 andpush: all push
+.PHONY: pad-test c-pad c-reaction
+pad-test c-pad c-reaction:
+	./tools/build-examples.sh $@
