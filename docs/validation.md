@@ -83,3 +83,24 @@ flash, hidden/protection e ROM permaneceram iguais aos baselines.
 Evidência do chat mGBA: `/tmp/mgba-netdeget-local-e964hi6b/run.log` e
 `/tmp/mgba-netdeget-local-e964hi6b/reopened/run.log`. REON usou fixture local
 isolada; nenhum dado de produção foi necessário.
+
+### Rodada C PAD em produção REON
+
+CONFIRMED em 2026-10-06: o chat mGBA executou o mesmo C PAD contra o
+REON de produção, usando DNS real na porta 53 e sockets normais, sem servidor
+loopback. A aquisição pelo host original, armazenamento de 8192 bytes, oito
+controles e releases, saída, reabertura com estado zerado e execução em core
+novo passaram. O restante da flash ficou igual ao baseline e a abertura em
+core novo não alterou a flash. O runtime testado continua sendo 358230c82;
+os hashes do payload e wrapper nesta página permanecem iguais.
+
+Evidências mantidas fora do Git:
+`/tmp/mgba-netdeget-production-zqeg16la/run.log`,
+`/tmp/mgba-netdeget-production-zqeg16la/reopened/run.log` e
+`/tmp/mgba-netdeget-production-zqeg16la/c-pad-controls.png`. O responsável
+REON corroborou as requisições de catálogo e corpo e implantou G001 como
+conteúdo gratuito opt-in, com a atribuição MIT. Contas e credenciais sintéticas
+da rodada não são publicadas neste repositório.
+
+Esta evidência de produção cobre C PAD; o jogo de reação continua validado
+somente offline. Não amplia a cobertura para hardware ou runtime padrão GBDK.
