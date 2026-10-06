@@ -35,3 +35,8 @@ G001: publish one at a time or assign distinct IDs before packaging.
 These are host-loaded minigames, not standalone cartridge ROMs. Supply your own
 legally obtained host ROM and disposable synthetic save fixtures outside Git.
 No original ROM, real saves, credentials or server responses belong here.
+
+The original guides, examples and tools added here use the
+[MIT license](LICENSE.examples). This includes the generated example programs
+and their original font. Pre-existing upstream files and the host ROM are not
+relicensed by this addition.
