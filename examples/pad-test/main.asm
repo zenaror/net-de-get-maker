@@ -68,6 +68,12 @@ InputTesterStart:
 
 ExitInputTester:
     di
+.waitExitRelease
+    ; Do not carry Select into the host's catalog-rebuild shortcut.
+    call $027C
+    ldh a, [$FF96]
+    and $0C
+    jr nz, .waitExitRelease
     ld a, $10                      ; Maker: backed out of game
     ld [$C671], a
     ld de, 0

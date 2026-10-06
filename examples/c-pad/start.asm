@@ -32,6 +32,13 @@ Entry:
     ldh [$FF70], a
     call C_ENTRY
     di
+.waitExitRelease
+    ; Held Select at host entry triggers catalog reconstruction. Return only
+    ; after both exit buttons are released; preserve the host stack/IE/STAT.
+    call $027C
+    ldh a, [$FF96]
+    and $0C
+    jr nz, .waitExitRelease
     ld a, $10
     ld [$C671], a
     ld de, 0
