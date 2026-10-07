@@ -63,3 +63,7 @@ HTTP fixtures byte-exact:
 | G001 / c-pad | `f91e5460d0c54c029fb4e8cde1d22f27d007c499eda1880ec6561a179b0e477a` | `b3cd44b784d9b96c03db32a1a1a588cf89f869a1a36992197aa640ee667006c3` |
 | G002 / pad-test | `5e7859cf12b6859e33f9c0ac129b308871bb386abae22c1d437357e6c241bc69` | `1dd5bbeea71edb3284e6046666ce9a0e94c38d7b6e13d720ca3d7372505c7c76` |
 | G003 / c-reaction | `2d222205fd99fa749003d1584ca5dd375c7ab81a3e090c5fe30b8735cfebddcc` | `bf4ed67fb984083c4adc84c3a43743b676d1e35dbf9e35b45813c1eafba742ac` |
+
+The default legacy `make` now creates `bin/` before linking, so a fresh checkout
+builds without a manually created output directory. Its template built to an
+8192-byte payload with the expected additive checksum in this validation.
