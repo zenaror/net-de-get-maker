@@ -97,3 +97,28 @@ All three examples passed against final core `431041ac6`, library SHA256
 Independent review repeated them successfully in
 `/tmp/maker-natural-avz4z2_i`, `7vrr_utq`, `4awsw9ve` and reported no objections
 to this follow-up. These are staged-payload tests, not HTTP installation claims.
+
+## Natural HTTP installation on the shipped Linux library
+
+**CONFIRMED (2026-10-06):** the mGBA owner repeated acquisition of G001 C PAD,
+G002 assembly PAD and G003 REACTION through the original Net de Get and a local
+REON harness, using the actual Linux release library from committed core
+`431041ac6e264b119476d47ecf9ab96f03f11d54`, SHA256
+`9d1c7aa87d5f82f13b78a19c85778b48ff3258f1c387291299e5045d150ca936`.
+Run logs report `0.11-feature/full_server-9343-431041ac6`, without dirty.
+All three installed 8192-byte payloads were independently compared here against
+the sealed G001/G002/G003 fixtures and matched exactly; catalog records were
+`10 01 FF 00` (BOX2). The owner verified catalog/body response hashes and
+preservation of bytes outside each installed block.
+
+| Example | Natural acquisition | Fresh-core checks |
+| --- | --- | --- |
+| C PAD G001 | `/tmp/mgba-netdeget-local-c87iafz3` | `/tmp/mgba-clean-61f28-gameplay-zefkbz34`: eight inputs, held/partial release, host return, BOX2 preservation |
+| ASM PAD G002 | `/tmp/mgba-netdeget-local-m7rjn5ti` | `/tmp/mgba-clean-61f28-gameplay-g08xdd5b`: same checks |
+| REACTION G003 | `/tmp/mgba-netdeget-local-pmb9jz1n` | `/tmp/mgba-maker-reaction-7cslycib`: WAIT, TOO EARLY, GO, RESULT, reset, held/partial-release exit |
+
+Fresh-core runs preserved the full flash. The reports and payload snapshots
+were inspected independently before integration. This supersedes the earlier
+new-body-delivery pending status for these three specific artifacts. It does
+not certify physical cartridges, arbitrary games or the legacy MySQL uploader.
+REON prices are historical game metadata; REON does not implement billing.

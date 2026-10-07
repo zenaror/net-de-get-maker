@@ -24,6 +24,17 @@ Seis testes de payload/checksum/ID e limites de mode5 passaram; `make` padrão
 produziu 8192 bytes e checksum correto em checkout sem `bin/` prévio.
 O uploader MySQL legado não foi executado; publicação REON usa o importer atual.
 
+### Aquisição HTTP atual
+
+Os três novos exemplos passaram por download natural, instalação byte a byte,
+execução em core novo e saída preservando BOX2 com a biblioteca Linux que será
+distribuída: core `431041ac6`, SHA256
+`9d1c7aa87d5f82f13b78a19c85778b48ff3258f1c387291299e5045d150ca936`.
+A tabela de hashes e os caminhos dos relatórios estão em
+[exit-release.md](exit-release.md#natural-http-installation-on-the-shipped-linux-library).
+Essa rodada fecha a pendência de entrega dos novos corpos G001/G002/G003.
+O preço é metadado histórico; não existe sistema de tarifação REON.
+
 ## Histórico: matriz anterior à espera de liberação — 2026-10-06
 
 | Exemplo | Build | Entrada natural, controles, saída, reabertura | Download HTTP e core novo |
