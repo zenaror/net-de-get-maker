@@ -30,7 +30,16 @@ tools/build-examples.sh c-reaction
 Outputs go to `build/<example>/`: `game.flash` is an 8192-byte flash
 payload; `0000.G001.cgb` is the compressed HTTP body. They are different formats.
 `game.json` records header metadata and hashes. Each example uses fixture ID
-G001: publish one at a time or assign distinct IDs before packaging.
+G001: publish one at a time or assign distinct IDs before packaging:
+
+```sh
+python3 tools/package.py build/pad-test/linked.gb build/pad-test/game --game-id G002
+python3 tools/validation/payload.py
+```
+
+The ID is included in the recalculated full-block checksum. See
+[exit-release validation](docs/exit-release.md) for the updated host-return
+behavior and evidence boundaries.
 
 These are host-loaded minigames, not standalone cartridge ROMs. Supply your own
 legally obtained host ROM and disposable synthetic save fixtures outside Git.

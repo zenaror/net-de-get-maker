@@ -2,6 +2,6 @@ bin
 main.o
 raw
 bk
-/__pycache__
+__pycache__/
 
 /build/

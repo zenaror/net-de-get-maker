@@ -1,33 +1,14 @@
-
-import struct
+"""Extract complete declared flash blocks from a linked RGBDS image."""
 import argparse
+from pathlib import Path
+from tools.payload import extract_image
 
-parser = argparse.ArgumentParser(
-                    prog='push.py',
-                    description='trims net-de-get minigame to size')
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('filename', help='linked image filename under bin/')
+    args = parser.parse_args()
+    path = Path('bin') / args.filename
+    path.write_bytes(extract_image(path.read_bytes()))
 
-parser.add_argument('filename')           # positional argument
-
-args = parser.parse_args()
-
-game_data = b""
-with open("bin/%s" % args.filename, "rb") as game_bin:
-	
-	# get game size in blocks
-	game_bin.seek(0x4005)
-	game_size = struct.unpack('b', game_bin.read(1))[0]
-	
-	# read that much data
-	game_bin.seek(0x4000)
-	game_data = game_bin.read(game_size*0x2000)
-	
-	# trim out trailing zeroes
-	game_data = bytearray(game_data).rstrip(b"\x00")[:-1]
-	
-	# inject checksum
-	checksum = sum(game_data) - sum(game_data[0x6D:0x6F])
-	game_data[0x6D] = checksum & 0xFF
-	game_data[0x6E] = (checksum >> 8) & 0xFF
-	
-with open("bin/%s" % args.filename, "wb") as game_bin:
-	game_bin.write(game_data)
+if __name__ == '__main__':
+    main()

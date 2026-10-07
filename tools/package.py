@@ -7,8 +7,9 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from bmvj_compress import bmvj_compress
+from tools.payload import finalize_payload, set_game_id
 
-def package(image, stem):
+def package(image, stem, game_id_override=None):
     data = bytearray(image[0x4000:0x6000])
     if len(data) != 8192 or any(image[:0x4000]) or any(image[0x6000:]):
         raise ValueError('example must occupy only $4000-$5FFF in a zero-filled RGBDS image')
@@ -18,11 +19,13 @@ def package(image, stem):
         raise ValueError('entry offset and jump disagree')
     if 0 not in data[15:36] or 0 not in data[36:68] or data[68] != 255:
         raise ValueError('title/description must terminate inside their header fields; title marker must be FF')
+    if game_id_override is not None:
+        data = bytearray(set_game_id(data, game_id_override))
     game_id = bytes(data[9:13]).decode('ascii')
     if len(game_id) != 4 or game_id[0] != 'G' or not game_id[1:].isdigit():
         raise ValueError('expected ID Gddd')
-    checksum = (sum(data) - sum(data[0x6D:0x6F])) & 65535
-    data[0x6D:0x6F] = checksum.to_bytes(2, 'little')
+    data = finalize_payload(data)
+    checksum = int.from_bytes(data[0x6D:0x6F], 'little')
     stem.parent.mkdir(parents=True, exist_ok=True)
     payload = bytes(data)
     body = bmvj_compress(payload)
@@ -43,5 +46,6 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('rgbds_image', type=Path)
     p.add_argument('output_stem', type=Path)
+    p.add_argument('--game-id', help='assign Gddd before checksum/compression')
     a = p.parse_args()
-    package(a.rgbds_image.read_bytes(), a.output_stem)
+    package(a.rgbds_image.read_bytes(), a.output_stem, a.game_id)

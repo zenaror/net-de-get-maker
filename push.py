@@ -3,6 +3,7 @@ import subprocess
 import argparse
 import mysql.connector
 import bmvj_compress
+from tools.payload import set_game_id
 
 
 
@@ -29,11 +30,13 @@ with open("bin/%s" % args.filename, "rb") as game_bin:
 	
 cursor = db.cursor()
 cursor.execute("INSERT INTO bmvj_games VALUES(NULL, 0, 0, 0, 0, 0, 0, \"\", \"\", 0, \"\")")
-db.commit()
 
 game_id = cursor.lastrowid
 # insert game ID into binary
-game_binary = game_binary[:10] + str.encode(f"{game_id:03d}") + game_binary[13:]
+if not 0 <= game_id <= 999:
+    db.rollback()
+    raise ValueError('Net de Get game IDs must fit Gddd (0..999)')
+game_binary = set_game_id(game_binary, f"G{game_id:03d}")
 
 category = game_binary[6]
 genre = game_binary[7]
