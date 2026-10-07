@@ -10,6 +10,14 @@ reabertura. Veja a matriz de evidências antes de extrapolar esses resultados.
 O port é uma integração inicial do compilador. Não é um port completo do SDK
 Maker nem da biblioteca GBDK para Net de Get.
 
+## Exemplo REACTION
+
+O diretório [`examples/c-reaction/`](../examples/c-reaction/) contém `main.c`,
+`start.asm` e um README próprios. `make c-reaction` compila essa entrada. Ela
+seleciona REACTION e inclui a implementação compartilhada de C PAD; o header
+faz o mesmo com a ponte assembly. Os programas e o contrato do host continuam
+idênticos aos payloads validados, sem duplicar código de ABI e gráficos.
+
 ## Como o build funciona
 
 1. `lcc -no-crt -no-libs` compila sem startup de cartucho e bibliotecas padrão.

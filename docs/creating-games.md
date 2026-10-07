@@ -3,8 +3,10 @@
 ## 1. Escolha um exemplo
 
 Execute os comandos do README. Comece por `examples/pad-test/main.asm` para
-RGBDS ou `examples/c-pad/main.c` para C. `c-reaction` compila o mesmo arquivo C
-com `REACTION` definido: espere GO, pressione A e veja o tempo em hexadecimal;
+RGBDS, `examples/c-pad/main.c` para o diagnóstico C ou
+[`examples/c-reaction/`](../examples/c-reaction/) para o jogo de reação.
+REACTION tem entrada e header próprios, reutilizando a implementação C e a
+ponte do C PAD: espere GO, pressione A e veja o tempo em hexadecimal;
 B reinicia. Apertar A antes de GO mostra TOO EARLY. Start+Select volta ao host.
 O tempo é contado em iterações sincronizadas com frames, não em milissegundos;
 FF significa saturação em 255. Este exemplo não salva recordes.

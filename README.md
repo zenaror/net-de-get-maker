@@ -15,7 +15,7 @@ Three original examples are available:
 | --- | --- |
 | `pad-test` | RGBDS entry, direct graphics, eight buttons, host return |
 | `c-pad` | The same diagnostic contract compiled in C with GBDK |
-| `c-reaction` | A small playable reaction game in C: A reacts, B resets |
+| [`c-reaction`](examples/c-reaction/) | A small playable reaction game in C: A reacts, B resets |
 
 ```sh
 # Requires Python 3 and RGBDS (validated with 1.0.3).

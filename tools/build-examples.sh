@@ -11,12 +11,16 @@ case "$kind" in
     "${RGBDS:-}rgbasm" -I "$out/" -o "$out/main.o" examples/pad-test/main.asm
     ;;
   c-pad|c-reaction)
-    cflags=(); aflags=()
-    if [[ "$kind" == c-reaction ]]; then cflags=(-DREACTION); aflags=(-DREACTION); fi
+    main_source="examples/c-pad/main.c"
+    header_source="examples/c-pad/start.asm"
+    if [[ "$kind" == c-reaction ]]; then
+      main_source="examples/c-reaction/main.c"
+      header_source="examples/c-reaction/start.asm"
+    fi
     : "${GBDK_HOME:?Set GBDK_HOME to the GBDK 4.5.0 directory containing bin/lcc}"
-    "$GBDK_HOME/bin/lcc" "${cflags[@]}" -K -no-crt -no-libs -Wl-b_CODE=0x4800 -Wl-b_DATA=0xD820 -Wl-m -Wl-w -o "$out/main.ihx" examples/c-pad/main.c examples/c-pad/link-symbols.s
+    "$GBDK_HOME/bin/lcc" -K -no-crt -no-libs -Wl-b_CODE=0x4800 -Wl-b_DATA=0xD820 -Wl-m -Wl-w -o "$out/main.ihx" "$main_source" examples/c-pad/link-symbols.s
     entry="$(python3 tools/c_extract.py "$out/main.ihx" "$out/main.map" "$out/c-code.bin")"
-    "${RGBDS:-}rgbasm" "${aflags[@]}" -D C_ENTRY="$entry" -I "$out/" -o "$out/main.o" examples/c-pad/start.asm
+    "${RGBDS:-}rgbasm" -D C_ENTRY="$entry" -I "$out/" -o "$out/main.o" "$header_source"
     ;;
   *) echo 'Choose pad-test, c-pad or c-reaction' >&2; exit 2 ;;
 esac

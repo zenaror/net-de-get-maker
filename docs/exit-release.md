@@ -122,3 +122,22 @@ were inspected independently before integration. This supersedes the earlier
 new-body-delivery pending status for these three specific artifacts. It does
 not certify physical cartridges, arbitrary games or the legacy MySQL uploader.
 REON prices are historical game metadata; REON does not implement billing.
+
+## Explicit REACTION directory
+
+The REACTION program originally existed only as a `-DREACTION` variant of
+`examples/c-pad/main.c`; it had a build target but no discoverable
+`examples/c-reaction/` directory. That directory now has its own `main.c`,
+`start.asm` and README, selected directly by `make c-reaction`. The wrappers
+share the existing implementation and host bridge, preserving the ABI/code.
+
+Rebuilds reproduced the default G001 REACTION payload/body hashes
+`30019d1ef2f8cf14381a0104829a0ffe50c1300d6c0f57e1d053deca56ddd0fa` /
+`182b1ddb9a9ee24a0be0448932c8faa948ae10aa342734bcf043f587f6bbe32a`.
+G003 CLI packaging was byte-exact against the naturally validated release
+(`2d222205fd99fa749003d1584ca5dd375c7ab81a3e090c5fe30b8735cfebddcc` /
+`bf4ed67fb984083c4adc84c3a43743b676d1e35dbf9e35b45813c1eafba742ac`).
+C PAD hashes also remained unchanged. Six payload tests passed; the updated
+REACTION offline build/run passed in `/tmp/maker-natural-5fsnixz4` with core
+431041ac6. Independent static review found no objections. No ROM, mGBA source
+or live server body was changed for this organization fix.
