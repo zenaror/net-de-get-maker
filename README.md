@@ -5,9 +5,9 @@ includes and legacy `make` workflow remain available.
 
 ## Start here
 
-- [Guia de criação de jogos (Português)](docs/creating-games.md)
-- [GBDK: integração experimental e limites](docs/gbdk.md)
-- [Evidências e como repetir a validação](docs/validation.md)
+- [Creating minigames](docs/creating-games.md)
+- [GBDK: experimental integration and limits](docs/gbdk.md)
+- [Evidence and reproducing validation](docs/validation.md)
 
 Three original examples are available:
 

@@ -1,76 +1,76 @@
-# GBDK: integração experimental
+# GBDK: experimental integration
 
-## O que já funciona
+## What works
 
-GBDK-2020 4.5.0 compila C para SM83 dentro de um payload carregado pelo host.
-`c-pad` passou por entrada natural, oito botões, saída e reabertura no mesmo
-core. `c-reaction` passou por rodada válida, entrada antecipada, reset, saída e
-reabertura. Veja a matriz de evidências antes de extrapolar esses resultados.
+GBDK-2020 4.5.0 compiles C for SM83 inside a host-loaded payload.
+`c-pad` passed natural entry, all eight buttons, exit, and relaunch in the same
+core. `c-reaction` passed a valid round, early input, reset, exit, and relaunch.
+Consult the evidence matrix before extending these results to other cases.
 
-O port é uma integração inicial do compilador. Não é um port completo do SDK
-Maker nem da biblioteca GBDK para Net de Get.
+This is an initial compiler integration. It is not a complete port of the
+Maker SDK or the GBDK library to Net de Get.
 
-## Exemplo REACTION
+## REACTION example
 
-O diretório [`examples/c-reaction/`](../examples/c-reaction/) contém `main.c`,
-`start.asm` e um README próprios. `make c-reaction` compila essa entrada. Ela
-seleciona REACTION e inclui a implementação compartilhada de C PAD; o header
-faz o mesmo com a ponte assembly. Os programas e o contrato do host continuam
-idênticos aos payloads validados, sem duplicar código de ABI e gráficos.
+[`examples/c-reaction/`](../examples/c-reaction/) contains its own `main.c`,
+`start.asm`, and README. `make c-reaction` builds this entry. It selects REACTION
+and includes the shared C PAD implementation; the header does the same with the
+assembly bridge. The programs and host contract remain identical to the validated
+payloads, without duplicating ABI or graphics code.
 
-## Como o build funciona
+## How the build works
 
-1. `lcc -no-crt -no-libs` compila sem startup de cartucho e bibliotecas padrão.
-2. `_CODE` começa em 4800; o linker produz Intel HEX e mapa largo.
-3. `c_extract.py` rejeita código fora de 4800..5FFF e áreas de runtime com tamanho
-   não zero. Copia código e constantes para `c-code.bin` e encontra `game_main`.
-4. RGBDS monta o header e a ponte em 406F; inclui o código C em 4800.
-5. `package.py` cria payload, wrapper e metadata offline.
+1. `lcc -no-crt -no-libs` compiles without cartridge startup or standard libraries.
+2. `_CODE` starts at 4800; the linker produces Intel HEX and a wide map.
+3. `c_extract.py` rejects code outside 4800..5FFF and runtime areas with nonzero
+   size. It copies code and constants to `c-code.bin` and locates `game_main`.
+4. RGBDS assembles the header and bridge at 406F and includes C code at 4800.
+5. `package.py` creates the payload, wrapper, and metadata offline.
 
-`-K` dispensa o checker de cartucho do lcc; o extrator aplica os limites próprios
-do payload. `link-symbols.s` declara referências para as atribuições padrão
-_shadow_OAM/.STACK do linker, sem reservar armazenamento nem executar código.
-O programa não usa esses símbolos, OAM do GBDK ou SP=E000.
+`-K` skips lcc's cartridge checker; the extractor enforces the payload's own
+limits. `link-symbols.s` declares references for the linker's default
+_shadow_OAM/.STACK assignments, without allocating storage or executing code.
+The program does not use those symbols, GBDK OAM, or SP=E000.
 
-Globals são explicitamente `__at(D800...)` e inicializados em `game_main`.
-Não acrescente globals comuns ou inicializadas sem implementar e validar um
-runtime de inicialização: o build rejeita essas áreas. Constantes ficam no
-código. Não existe heap, crt0, interrupt vector próprio ou reset de SP.
+Globals use explicit `__at(D800...)` addresses and are initialized in `game_main`.
+Do not add ordinary or initialized globals without implementing and validating
+an initialization runtime: the build rejects those areas. Constants stay in
+code. There is no heap, crt0, separate interrupt vector, or SP reset.
 
-## ABI e runtime
+## ABI and runtime
 
-A release 4.5.0 usa a ABI SM83 padrão `__sdcccall(1)`. Não faça cast de 027C para
-um ponteiro C: a API do host recebe/retorna registradores com outro contrato.
-A função naked `joypad()` é uma ponte assembly sem argumentos; preserva BC,
-chama 027C e retorna. O C lê os resultados em FF96/FF97.
+Release 4.5.0 uses the default SM83 ABI, `__sdcccall(1)`. Do not cast 027C to a
+C function pointer: the host API receives/returns registers under a different
+contract. The naked `joypad()` function is an assembly bridge with no arguments;
+it preserves BC, calls 027C, and returns. C reads the results from FF96/FF97.
 
-A ponte de entrada preserva IE/STAT e SVBK na pilha do host, faz DI, seleciona
-WRAM1, chama C, limpa callbacks e retorna ao dispatcher original. Não há uma
-nova pilha. Mantenha poucas chamadas aninhadas: nas amostras naturais do jogo de reação o
-SP observado foi FFEE e voltou a FFF6 no menu; isso não estabelece o máximo
-consumido nem um orçamento universal. Recursão e grandes arrays locais exigem
-outra estratégia de pilha e validação.
+The entry bridge preserves IE/STAT and SVBK on the host stack, executes DI,
+selects WRAM1, calls C, clears callbacks, and returns to the original dispatcher.
+It does not create a new stack. Keep nested calls shallow: natural reaction-game
+samples observed SP=FFEE, returning to FFF6 in the menu; this does not establish
+maximum consumption or a universal stack budget. Recursion and large local arrays
+require a different stack strategy and validation.
 
-Não use automaticamente `printf`, `malloc`, `wait_vbl_done`, `add_VBL`, sprites,
-áudio ou funções banked normais do GBDK: elas pressupõem globals/startup e
-banking de cartucho próprios. Uma futura ponte para callbacks precisa respeitar
-a convenção real do dispatcher do host e preservar registradores; não basta
-instalar uma função `__interrupt` que termina com RETI. Isso ainda não foi validado.
+Do not automatically use `printf`, `malloc`, `wait_vbl_done`, `add_VBL`, sprites,
+audio, or ordinary GBDK banked functions: they assume their own globals/startup
+and cartridge banking. A future callback bridge must respect the actual host
+dispatcher convention and preserve registers; installing an `__interrupt`
+function ending in RETI is insufficient. This has not yet been validated.
 
-O banking usual de 16 KiB do GBDK não modela diretamente as duas janelas MBC6 de
-8 KiB. O build atual rejeita código além de um bloco. Uma próxima etapa precisa
-implementar wrappers de mapper e far calls, com preservação das duas janelas.
+GBDK's usual 16 KiB banking does not directly model MBC6's two 8 KiB windows.
+The current build rejects code beyond one block. A later step needs mapper
+wrappers and far calls that preserve both windows.
 
-## Toolchain reproduzida
+## Reproduced toolchain
 
-Release oficial Linux x86_64: GBDK 4.5.0.
-Arquivo `gbdk-linux64.tar.gz`, SHA256:
+Official Linux x86_64 release: GBDK 4.5.0.
+Archive `gbdk-linux64.tar.gz`, SHA256:
 `d7857a5f6d135ee4c249043ca26aad9f2ec8ab5d4106d97720d404114f42605c`.
-RGBDS 1.0.3 e Python 3. Nenhum binário de toolchain é versionado aqui.
+RGBDS 1.0.3 and Python 3. No toolchain binaries are versioned here.
 
-Fontes primárias:
+Primary sources:
 
 - [Release 4.5.0](https://github.com/gbdk-2020/gbdk-2020/releases/tag/4.5.0)
-- [Opções da toolchain](https://gbdk.org/docs/api/docs_toolchain_settings.html)
-- [Migração e ABI SDCC](https://gbdk.org/docs/api/docs_migrating_versions.html)
-- [Guia de uso GBDK](https://gbdk.org/docs/api/docs_using_gbdk.html)
+- [Toolchain options](https://gbdk.org/docs/api/docs_toolchain_settings.html)
+- [Migration and SDCC ABI](https://gbdk.org/docs/api/docs_migrating_versions.html)
+- [GBDK usage guide](https://gbdk.org/docs/api/docs_using_gbdk.html)
