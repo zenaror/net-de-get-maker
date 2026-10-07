@@ -67,3 +67,33 @@ HTTP fixtures byte-exact:
 The default legacy `make` now creates `bin/` before linking, so a fresh checkout
 builds without a manually created output directory. Its template built to an
 8192-byte payload with the expected additive checksum in this validation.
+
+The raw extraction/checksum helper accepts 1..16 declared blocks; this does not
+mean the current compressor can frame all those sizes. Mode5 has 16-bit decoded
+and encoded length fields, so the current single-body compressor rejects decoded
+sizes above 65535 bytes (at most seven whole 8192-byte blocks) and oversized
+compressed streams. Eight-or-more-block delivery needs separately implemented
+and naturally validated framing. The three one-block examples are unaffected.
+A sixth offline test covers the rejected 65536-byte boundary.
+
+The legacy `push.py` targets `bmvj_games` with MySQL `LOAD_FILE` and external
+copies under `/var/lib/mysql/tmp`; it is **not** the current REON
+`bmvj_custom_games`/opt-in administrative importer. Copy failures now raise and
+loaded field lengths are checked before commit, but no legacy database run was
+performed. Publish the validated `game.json`/HTTP body using the current importer.
+
+## Updated offline driver and independent review
+
+The driver reads all feature defines from the actual mGBA `flags.make`, uses
+matching generated includes, verifies the executed runtime identity against
+that library, and removes loader-path overrides for the child process. It now
+expects BOX2 preservation and relaunch rather than the former accidental BOX1
+reconstruction. Exit is tested with partial release (`12:3, 4:3, 0:300`).
+
+All three examples passed against final core `431041ac6`, library SHA256
+`785daae7d4440ef15bf3238a92c8b33d621d8b84f6aacf85bac102f336c2650f`, version
+`0.11-feature/full_server-9343-431041ac6`, without dirty:
+`/tmp/maker-natural-3ncd_avn`, `4rf2m3zf`, `tspw8xb1`.
+Independent review repeated them successfully in
+`/tmp/maker-natural-avz4z2_i`, `7vrr_utq`, `4awsw9ve` and reported no objections
+to this follow-up. These are staged-payload tests, not HTTP installation claims.

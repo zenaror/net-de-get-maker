@@ -5,6 +5,7 @@ from pathlib import Path
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from tools.payload import extract_image, finalize_payload, set_game_id
+from bmvj_compress import bmvj_compress
 
 class PayloadTests(unittest.TestCase):
     def payload(self, blocks=1):
@@ -39,6 +40,10 @@ class PayloadTests(unittest.TestCase):
         for game_id in ('G1000', 'G１２３', 'X123', ''):
             with self.assertRaises(ValueError):
                 set_game_id(self.payload(), game_id)
+
+    def test_mode5_rejects_unrepresentable_decoded_length(self):
+        with self.assertRaises(ValueError):
+            bmvj_compress(bytes(65536))
 
     def test_reject_missing_or_inconsistent_blocks(self):
         for payload in (b'', self.payload()[:-1], self.payload() + b'\0'):

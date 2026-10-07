@@ -1,6 +1,30 @@
 # Validação e limites
 
-## Matriz de evidências — 2026-10-06
+## Validação atual da saída — 2026-10-06
+
+A saída corrigida espera Start e Select serem liberados antes do retorno ao
+host, preservando a organização BOX2. Os hashes atuais e as variantes G001,
+G002 e G003 estão em [exit-release.md](exit-release.md). A seção histórica
+abaixo conserva os hashes e o comportamento da rodada anterior; não descreve
+os novos artefatos.
+
+Os três exemplos passaram em `tools/validation/offline.py` atualizado com a
+biblioteca mGBA do commit `431041ac6`, SHA256
+`785daae7d4440ef15bf3238a92c8b33d621d8b84f6aacf85bac102f336c2650f`, versão
+`0.11-feature/full_server-9343-431041ac6`, sem dirty. O driver usa todas as
+C_DEFINES/includes geradas do build, verifica a identidade da biblioteca e
+confere saída com liberação parcial, reentrada BOX2, registros e flash estáveis.
+C/ASM PAD passaram oito inputs; REACTION passou WAIT, TOO EARLY, GO, RESULT e
+reset. Payloads preparados antes do boot não substituem aquisição HTTP natural.
+
+Evidências: `/tmp/maker-natural-3ncd_avn`, `4rf2m3zf` e `tspw8xb1`.
+Revisão independente repetiu os três testes com sucesso em
+`/tmp/maker-natural-avz4z2_i`, `7vrr_utq` e `4awsw9ve`.
+Seis testes de payload/checksum/ID e limites de mode5 passaram; `make` padrão
+produziu 8192 bytes e checksum correto em checkout sem `bin/` prévio.
+O uploader MySQL legado não foi executado; publicação REON usa o importer atual.
+
+## Histórico: matriz anterior à espera de liberação — 2026-10-06
 
 | Exemplo | Build | Entrada natural, controles, saída, reabertura | Download HTTP e core novo |
 | --- | --- | --- | --- |

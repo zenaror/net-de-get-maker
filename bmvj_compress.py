@@ -1,4 +1,6 @@
 def bmvj_compress(data: bytes) -> bytes:
+    if len(data) > 65535:
+        raise ValueError('mode-5 body uses a 16-bit decoded length; maximum 65535 bytes')
     if not data:
         return bytes(7)
     def make_tree(x):
@@ -133,5 +135,7 @@ def bmvj_compress(data: bytes) -> bytes:
                 next_bin += offs_tree[shift + 1] + f"{off:b}"[1:]
     next_bin += "0000000"
     ret += bytes(int(next_bin[i:i+8], 2) for i in range(0, len(next_bin) - 7, 8))
+    if len(ret) > 65535:
+        raise ValueError('mode-5 compressed stream exceeds its 16-bit length field')
     return b"\0\0\5" + len(ret).to_bytes(2, "little") \
         + len(data).to_bytes(2, "little") + bytes(2) + ret
